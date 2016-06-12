@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript" src="/script/ng-infinite-scroll/build/ng-infinite-scroll.min.js"></script>
+
+    <title>love</title>
+</head>
+<body>
+    <div id="menu">
+        <ul>
+            <li><a href="/html/letter">Letter</a></li>
+            <li><a href="/html/february">2월</a></li>
+            <li><a href="/html/march">3월</a></li>
+            <li><a href="/html/april">4월</a></li>
+            <li><a href="/html/may">5월</a></li>
+            <li><a href="/html/food">맛있는고</a></li>
+            <li><a href="/html/360">360</a></li>
+        </ul>
+    </div>
+    <h1>5월 우리의 이야기</h1>
+    <div ng-app="myApp" ng-controller="DemoController">
+        <div infinite-scroll="loadImage()" infinite-scroll-distance="1" infinite-scroll-disabled="remain_data">
+            <div id="loadedImage">
+                <img ng-repeat="image in images" ng-src="/photo/may/{{image}}">
+            </div>
+        </div>
+    </div>
+    <script>
+        var myApp = angular.module('myApp', ['infinite-scroll']);
+        myApp.controller('DemoController', function($scope) {
+                $scope.remain_data = false ;
+                $scope.images = [1, 2] ;
+                $scope.warning = function() {
+                    alert("warn warn") ;
+                }
+                $scope.loadImage = function() {
+                    var last = $scope.images[$scope.images.length - 1] ;
+
+                    $scope.images.push(last + 1) ;
+
+                    $.ajax({
+                        type: 'POST',
+                        data: 'test',
+                        url: '/remain',
+                        success: function(data) {
+                            if (data == 'n') {
+                                if ($scope.remain_data == false) {
+                                    $("#loadedImage").append("End Page") ;
+                                }
+                                $scope.remain_data = true ;
+                                }
+                        },
+                        error: function(error) {
+                            console.log("error" + error) ;
+                        }
+                    });
+
+                }
+        }) ;
+
+    </script>
+</body>
+</html>
